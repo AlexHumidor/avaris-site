@@ -3,54 +3,329 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Avaris — скачать</title>
+<title>Avaris — что нового</title>
 <style>
-  :root { --bg: #fff; --fg: #111; --dim: #777; }
+  @font-face {
+    font-family: "Google Sans";
+    src: url("fonts/GoogleSans-Regular.ttf") format("truetype");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  :root {
+    --bg: #fff;
+    --fg: #111;
+    --dim: #666;
+    --line: rgba(0, 0, 0, .14);
+    --panel: rgba(0, 0, 0, .04);
+    --kbd: rgba(0, 0, 0, .07);
+  }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #111; --fg: #eee; --dim: #888; }
+    :root {
+      --bg: #111;
+      --fg: #eee;
+      --dim: #999;
+      --line: rgba(255, 255, 255, .16);
+      --panel: rgba(255, 255, 255, .05);
+      --kbd: rgba(255, 255, 255, .1);
+    }
   }
   * { box-sizing: border-box; }
   body {
-    max-width: 780px;
+    max-width: 1240px;
     margin: 0 auto;
-    padding: 56px 20px;
+    padding: 56px 20px 72px;
     background: var(--bg);
     color: var(--fg);
-    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font: 16px/1.6 "Google Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
-  h1 { font-size: 24px; font-weight: 600; margin: 0 0 32px; }
-
+  h1 { font-size: 26px; font-weight: 600; margin: 0 0 8px; letter-spacing: -.01em; }
+  .lead { color: var(--dim); margin: 0 0 32px; max-width: 640px; }
+  h2 { font-size: 18px; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 16px; font-weight: 600; margin: 30px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin: 5px 0; }
+  li::marker { color: var(--dim); }
   .layout {
     display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 48px;
+    grid-template-columns: 210px 1fr;
+    gap: 40px;
     align-items: start;
+    margin-bottom: 38px;
   }
-
   .buttons { display: grid; gap: 10px; }
   .btn {
-    padding: 12px 16px;
+    padding: 11px 14px;
     border: 1px solid var(--fg);
     color: var(--fg);
     text-decoration: none;
+    text-align: center;
   }
   .btn:hover { background: var(--fg); color: var(--bg); }
-
-  h2 { font-size: 17px; font-weight: 600; margin: 0; }
-  .date { color: var(--dim); font-size: 14px; margin: 2px 0 12px; }
-  p { margin: 0; }
-
-  @media (max-width: 640px) {
-    .layout { grid-template-columns: 1fr; gap: 32px; }
+  .date { color: var(--dim); font-size: 14px; margin: 2px 0 14px; }
+  .summary { color: var(--dim); }
+  .summary b { color: var(--fg); font-weight: 600; }
+  .quick, .log { max-width: 760px; }
+  .quick > p, .log > p { color: var(--dim); }
+  .hint {
+    border-left: 3px solid var(--line);
+    padding: 2px 0 2px 14px;
+    margin: 14px 0;
+    color: var(--dim);
+  }
+  kbd {
+    display: inline-block;
+    padding: 1px 6px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--kbd);
+    color: var(--fg);
+    font: 0.88em/1.4 ui-monospace, SFMono-Regular, Consolas, monospace;
+  }
+  code {
+    font: 0.9em/1.4 ui-monospace, SFMono-Regular, Consolas, monospace;
+    color: var(--fg);
+  }
+  .details {
+    max-width: 760px;
+    margin: 30px 0 0;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  .details summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    cursor: pointer;
+    font-weight: 600;
+    list-style: none;
+    user-select: none;
+  }
+  .details summary::-webkit-details-marker { display: none; }
+  .details summary::after {
+    content: "+";
+    color: var(--dim);
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 400;
+  }
+  .details[open] summary::after { content: "–"; }
+  .details .log { padding: 0 16px 16px; }
+  .page[hidden] { display: none; }
+  .pages { min-height: 320px; }
+  .page h3:first-child { margin-top: 0; }
+  .page-nav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .page-nav button {
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--fg);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .page-nav button:hover { background: var(--fg); color: var(--bg); }
+  .page-nav #page-prev { justify-self: start; }
+  .page-nav #page-next { justify-self: end; }
+  .page-indicator { color: var(--dim); font-size: 14px; }
+  .rule { border: 0; border-top: 1px solid var(--line); margin: 34px 0; }
+  .hotkeys {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 16px;
+    font-size: 14px;
+  }
+  .hotkeys th, .hotkeys td {
+    padding: 7px 8px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  .hotkeys th { color: var(--dim); font-weight: 500; font-size: 13px; }
+  .hotkeys td:nth-child(2) { white-space: nowrap; }
+  @media (max-width: 700px) {
+    .hotkeys th:nth-child(3), .hotkeys td:nth-child(3) { display: none; }
+  }
+  .page-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 560px);
+    gap: 40px;
+    align-items: start;
+  }
+  .main { min-width: 0; }
+  .side { min-width: 0; }
+  .video-bottom { margin-top: 0; }
+  .video-bottom h2 { margin: 0 0 14px; }
+  .video-bottom video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin: 0;
+    background: #000;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .shots { margin-top: 28px; }
+  .shots-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .shots-head h3 { margin: 0; font-size: 15px; }
+  .shots-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .shots-controls button {
+    width: 32px;
+    height: 28px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--fg);
+    font: inherit;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .shots-controls button:hover { background: var(--fg); color: var(--bg); }
+  .shots-indicator { color: var(--dim); font-size: 13px; min-width: 34px; text-align: center; }
+  .shots-strip {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    padding-bottom: 6px;
+  }
+  .shots-strip figure {
+    flex: 0 0 100%;
+    margin: 0;
+    scroll-snap-align: center;
+  }
+  .shots-strip img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #000;
+    cursor: zoom-in;
+  }
+  .shots-strip figcaption {
+    color: var(--dim);
+    font-size: 12px;
+    margin-top: 7px;
+  }
+  .image-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    background: rgba(0, 0, 0, .92);
+  }
+  .image-modal.open { display: flex; }
+  .image-modal img {
+    max-width: 92vw;
+    max-height: 80vh;
+    object-fit: contain;
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 6px;
+    background: #000;
+  }
+  .image-modal p { color: #ddd; font-size: 14px; margin: 0; text-align: center; }
+  .image-modal button {
+    position: absolute;
+    width: 36px;
+    height: 34px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .image-modal button:hover { background: var(--fg); color: var(--bg); }
+  .image-modal .close { top: 14px; right: 14px; }
+  .image-modal .prev { left: 14px; top: 50%; transform: translateY(-50%); }
+  .image-modal .next { right: 14px; top: 50%; transform: translateY(-50%); }
+  .video-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, .86);
+  }
+  .video-modal.open { display: flex; }
+  .video-modal-inner {
+    position: relative;
+    width: min(1000px, 94vw);
+  }
+  .video-modal video {
+    display: block;
+    width: 100%;
+    max-height: 78vh;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 6px;
+  }
+  .video-modal-close {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .video-modal-close:hover { background: var(--fg); color: var(--bg); }
+  body.modal-open { overflow: hidden; }
+  @media (max-width: 980px) {
+    .page-grid { grid-template-columns: 1fr; gap: 28px; }
+    .video-bottom { margin-top: 8px; }
+  }
+  @media (max-width: 700px) {
+    .layout { grid-template-columns: 1fr; gap: 26px; }
+    .buttons { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
 <body>
 
+<div class="page-grid">
+<main class="main">
 <h1>Avaris</h1>
+<p class="lead">Клиент на базе DDNet с полностью переработанным HUD и интерфейсом. Вместо привычных панелей - острова, которые настраиваются прямо в чате.</p>
 
 <div class="layout">
-
   <div class="buttons">
     <a class="btn" href="downloads/Avaris-win64.zip">Windows 64-bit</a>
     <a class="btn" href="downloads/Avaris-linux_x86_64.tar.xz">Linux x86-64</a>
@@ -58,10 +333,317 @@
 
   <div>
     <h2>1.0</h2>
-    <p class="date">Первая версия</p>
+    <p class="date">Первая версия · 8 ноября 2026</p>
   </div>
+</div>
+
+<div class="quick">
+  <h3>Коротко чем клиент отличается от обычного DDNet:</h3>
+  <ul>
+    <li>Полностью другой HUD и UI: вместо привычных панелей - острова.</li>
+    <li>Настройки интерфейса открываются прямо в чате.</li>
+    <li>Мультисерверный Timeout: до 4 серверов, работает до закрытия клиента, отедльные вкладки чата для каждого сервера.</li>
+    <li>Дополнительно: автоответ, медиаплеер, просмотр захваченного игрока, история смертей и так далее.</li>
+  </ul>
+</div>
+
+<details class="details">
+  <summary>Подробное описание и инструкции</summary>
+  <div class="log">
+
+<div class="pages">
+<section class="page">
+<h3>Новый HUD и UI</h3>
+    <ul>
+      <li>Весь HUD состоит из островов. Острова можно прикрепить к краям экрана или сделать плавающими.</li>
+      <li>Верхний остров: обычный или компактный режим, размер интерфейса и HUD, размер курсора, скругление углов, цвет, анимации, показ карты при заходе, оружие, прыжки и играющий трек.</li>
+      <li>Нижний остров: счёт, FPS, предсказание, количество зрителей, позиция, скорость и угол, сообщения об убийствах и финишах.</li>
+      <li>Настройки открываются прямо в игре: откройте чат, наведите курсор на остров и нажмите <b>правую кнопку мыши</b>. Панель появится на месте острова. Правый клик вне панели - закрыть.</li>
+    </ul>
+</section>
+
+<section class="page" hidden>
+<h3>Быстрые действия</h3>
+    <ul>
+      <li><b>Scoreboard и курсор:</b> откройте Scoreboard и нажмите <kbd>Alt</kbd> появится курсор. В этом режиме можно искать игроков, открывать карточки, писать заметки, записывать демо и переходить в наблюдение. <kbd>Esc</kbd> убирает курсор.</li>
+      <li><b>Spectator HUD:</b> в режиме наблюдателя зажмите <kbd>Alt</kbd> откроется HUD наблюдателя. Отпустите <kbd>Alt</kbd>, чтобы закрыть.</li>
+      <li><b>Остров эмоций:</b> правая кнопка мыши - добавить эмоцию в избранное или убрать из него; средняя кнопка - скрыть эмоцию. Зажмите <kbd>Alt</kbd>, чтобы показать скрытые эмоции, и средней кнопкой верните нужную. Полный сброс скрытых и избранных - в настройках острова, вкладка «Emoticon».</li>
+      <li><b>Эмоции: остров или колесо:</b> там же, в настройках острова на вкладке «Emoticon», переключается режим «Island / Wheel» и масштаб.</li>
+      <li><b>Чат:</b> вкладки для текущего сервера и серверов в Timeout (A–D). Левый клик по сообщению - ответ на него, <kbd>Alt</kbd> - перевод, упоминания отмечаются красной точкой, кнопка <b>@</b> переходит к упоминанию. Есть поиск и очистка чата.</li>
+      <li><b>Автоответ:</b> в настройках чата можно включить простой автоответ или AI-ответ через API.</li>
+    </ul>
+</section>
+
+<section class="page" hidden>
+<h3>Горячие клавиши</h3>
+    <table class="hotkeys">
+      <thead>
+        <tr><th>Действие</th><th>Клавиша / кнопка</th><th>Где</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Открыть чат</td><td><kbd>Enter</kbd> / <kbd>T</kbd></td><td>В игре</td></tr>
+        <tr><td>Настройки острова</td><td>ПКМ по острову</td><td>При открытом чате, навести на остров</td></tr>
+        <tr><td>Показать Scoreboard</td><td><kbd>Tab</kbd> (по умолчанию)</td><td>В игре</td></tr>
+        <tr><td>Курсор и поиск в Scoreboard</td><td><kbd>Alt</kbd></td><td>Scoreboard</td></tr>
+        <tr><td>Spectator HUD</td><td><kbd>Alt</kbd> (зажать)</td><td>В режиме наблюдателя (<code>/spec</code>)</td></tr>
+        <tr><td>Убрать курсор / закрыть</td><td><kbd>Esc</kbd></td><td>Scoreboard, меню, острова</td></tr>
+        <tr><td>Избранная эмоция</td><td>ПКМ</td><td>Остров эмоций</td></tr>
+        <tr><td>Скрыть или вернуть эмоцию</td><td>СКМ</td><td>Остров эмоций</td></tr>
+        <tr><td>Показать скрытые эмоции</td><td><kbd>Alt</kbd> (зажать)</td><td>Остров эмоций</td></tr>
+        <tr><td>Остров серверов Timeout</td><td>Бинд «Timeout servers» (зажать)</td><td>Controls → Miscellaneous</td></tr>
+        <tr><td>Выбрать сервер в острове</td><td>ЛКМ / <kbd>1–4</kbd> / колесо</td><td>Остров серверов</td></tr>
+        <tr><td>Ответ на сообщение</td><td>ЛКМ по сообщению</td><td>Чат</td></tr>
+        <tr><td>Перевод сообщения</td><td><kbd>Alt</kbd></td><td>Чат, навести на сообщение</td></tr>
+        <tr><td>Перейти к упоминанию</td><td><b>@</b></td><td>Чат</td></tr>
+      </tbody>
+    </table>
+</section>
+
+<section class="page" hidden>
+<h3>Timeout</h3>
+    <ul>
+      <li>До <b>4 серверов</b> можно держать в Timeout одновременно.</li>
+      <li>В чате есть отдельная вкладка для каждого сервера; история чата сохраняется при переключении.</li>
+      <li>В браузере серверов и в игровом меню есть кнопки серверов A–D. В игровом меню текущий сервер подсвечивается.</li>
+      <li>Остров серверов открывается по бинду: <b>Controls → Miscellaneous → Timeout servers</b>. Бинд работает по зажатию: зажали - остров открылся, отпустили - закрылся. Выбор - мышью, клавишами <kbd>1–4</kbd> или колесом.</li>
+    </ul>
+</section>
+
+<section class="page" hidden>
+<h3>Что ещё</h3>
+    <ul>
+      <li>Просмотр захваченного игрока в острове во время игры.</li>
+      <li>Возможность просмотра Demo прямо во время игры.</li>
+      <li>История смертей с просмотром replay прямо в настройках нижнего острова.</li>
+    </ul>
+</section>
 
 </div>
+
+<div class="page-nav">
+  <button id="page-prev" type="button">← Назад</button>
+  <span class="page-indicator" id="page-indicator"></span>
+  <button id="page-next" type="button">Вперёд →</button>
+</div>
+  </div>
+</details>
+</main>
+<aside class="side">
+<section class="video-bottom" id="video">
+  <h2>Видео</h2>
+  <video id="video-preview" autoplay muted loop playsinline poster="video/all-720p.jpg" title="Открыть видео" aria-label="Мини-обзор Avaris">
+    <source src="video/all-720p.mp4" type="video/mp4">
+    Ваш браузер не поддерживает видео.
+  </video>
+</section>
+
+<section class="shots" id="screenshots">
+  <div class="shots-head">
+    <h3>Скриншоты</h3>
+    <div class="shots-controls">
+      <button id="shots-prev" type="button" aria-label="Предыдущий скриншот">←</button>
+      <span class="shots-indicator" id="shots-indicator"></span>
+      <button id="shots-next" type="button" aria-label="Следующий скриншот">→</button>
+    </div>
+  </div>
+  <div class="shots-strip" id="shots-strip">
+    <figure>
+      <img src="picture/1.png" alt="Игровой HUD Avaris с островами и чатом">
+      <figcaption>01 — игровой HUD: острова, чат и вкладки серверов</figcaption>
+    </figure>
+    <figure>
+      <img src="picture/2.png" alt="Настройки острова: размер интерфейса и стиль HUD">
+      <figcaption>02 — настройки острова: размер интерфейса, скругления и стиль HUD</figcaption>
+    </figure>
+    <figure>
+      <img src="picture/3.png" alt="Игровое меню Avaris">
+      <figcaption>03 — игровое меню: основные действия в одном острове</figcaption>
+    </figure>
+    <figure>
+      <img src="picture/4.png" alt="Настройки звука Avaris">
+      <figcaption>04 — звук: отдельно игра, чат, вход тиммейтов и врагов</figcaption>
+    </figure>
+    <figure>
+      <img src="picture/5.png" alt="Браузер серверов Avaris">
+      <figcaption>05 — браузер серверов: фильтры, избранное и сообщества</figcaption>
+    </figure>
+    <figure>
+      <img src="picture/6.png" alt="Scoreboard с курсором по Alt">
+      <figcaption>06 — Scoreboard: курсор по Alt, поиск и карточки игроков</figcaption>
+    </figure>
+    <figure>
+      <img src="picture/7.png" alt="Карточка игрока в Scoreboard">
+      <figcaption>07 — карточка игрока: заметка, команда, враг и наблюдение</figcaption>
+    </figure>
+    <figure>
+      <img src="picture/8.png" alt="Настройки скинов Avaris">
+      <figcaption>08 — скины: Tee A/B, комьюнити-скины и свои цвета</figcaption>
+    </figure>
+  </div>
+</section>
+</aside>
+</div>
+
+<div class="video-modal" id="video-modal" role="dialog" aria-modal="true" aria-label="Мини-обзор Avaris">
+  <div class="video-modal-inner">
+    <button class="video-modal-close" id="video-modal-close" type="button" aria-label="Закрыть">×</button>
+    <video id="video-modal-player" controls playsinline preload="metadata" poster="video/all-720p.jpg" controlslist="nodownload nofullscreen" disablepictureinpicture>
+      <source src="video/all-720p.mp4" type="video/mp4">
+      Ваш браузер не поддерживает видео.
+    </video>
+  </div>
+</div>
+
+<div class="image-modal" id="image-modal" role="dialog" aria-modal="true" aria-label="Просмотр скриншота">
+  <button class="close" id="image-modal-close" type="button" aria-label="Закрыть">×</button>
+  <button class="prev" id="image-modal-prev" type="button" aria-label="Предыдущий скриншот">←</button>
+  <img id="image-modal-img" src="" alt="">
+  <button class="next" id="image-modal-next" type="button" aria-label="Следующий скриншот">→</button>
+  <p id="image-modal-caption"></p>
+</div>
+
+<script>
+  const pages = Array.from(document.querySelectorAll('.details .page'));
+  const indicator = document.getElementById('page-indicator');
+  let currentPage = 0;
+
+  function showPage(index) {
+    if (!pages.length) return;
+    currentPage = (index + pages.length) % pages.length;
+    pages.forEach((page, i) => { page.hidden = i !== currentPage; });
+    if (indicator) indicator.textContent = (currentPage + 1) + ' / ' + pages.length;
+  }
+
+  document.getElementById('page-prev').addEventListener('click', () => showPage(currentPage - 1));
+  document.getElementById('page-next').addEventListener('click', () => showPage(currentPage + 1));
+  showPage(0);
+
+  const preview = document.getElementById('video-preview');
+  const videoModal = document.getElementById('video-modal');
+  const videoPlayer = document.getElementById('video-modal-player');
+
+  function openVideo() {
+    preview.pause();
+    videoModal.classList.add('open');
+    document.body.classList.add('modal-open');
+    if (Number.isFinite(preview.currentTime)) {
+      videoPlayer.currentTime = preview.currentTime;
+    }
+    videoPlayer.muted = false;
+    videoPlayer.play().catch(() => {});
+  }
+
+  function closeVideo() {
+    videoModal.classList.remove('open');
+    document.body.classList.remove('modal-open');
+    videoPlayer.pause();
+    if (Number.isFinite(videoPlayer.currentTime)) {
+      preview.currentTime = videoPlayer.currentTime;
+    }
+    preview.play().catch(() => {});
+  }
+
+  preview.addEventListener('click', openVideo);
+  preview.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openVideo();
+    }
+  });
+  document.getElementById('video-modal-close').addEventListener('click', closeVideo);
+  videoModal.addEventListener('click', (event) => {
+    if (event.target === videoModal) closeVideo();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && videoModal.classList.contains('open')) closeVideo();
+  });
+
+  const shotsStrip = document.getElementById('shots-strip');
+  const shots = Array.from(shotsStrip.querySelectorAll('figure'));
+  const shotsIndicator = document.getElementById('shots-indicator');
+  let shotIndex = 0;
+
+  function showShot(index) {
+    shotIndex = (index + shots.length) % shots.length;
+    shots[shotIndex].scrollIntoView({behavior: 'smooth', inline: 'center', block: 'nearest'});
+    if (shotsIndicator) shotsIndicator.textContent = (shotIndex + 1) + ' / ' + shots.length;
+  }
+
+  document.getElementById('shots-prev').addEventListener('click', () => showShot(shotIndex - 1));
+  document.getElementById('shots-next').addEventListener('click', () => showShot(shotIndex + 1));
+
+  shotsStrip.addEventListener('scroll', () => {
+    const step = shotsStrip.scrollWidth / shots.length;
+    if (step > 0) {
+      shotIndex = Math.round(shotsStrip.scrollLeft / step);
+      if (shotsIndicator) shotsIndicator.textContent = (shotIndex + 1) + ' / ' + shots.length;
+    }
+  }, {passive: true});
+
+  const imageModal = document.getElementById('image-modal');
+  const imageModalImg = document.getElementById('image-modal-img');
+  const imageModalCaption = document.getElementById('image-modal-caption');
+  let imageIndex = 0;
+
+  function updateImageModal() {
+    const figure = shots[imageIndex];
+    const img = figure.querySelector('img');
+    imageModalImg.src = img.src;
+    imageModalImg.alt = img.alt;
+    imageModalCaption.textContent = figure.querySelector('figcaption').textContent;
+  }
+
+  function openImage(index) {
+    imageIndex = index;
+    updateImageModal();
+    imageModal.classList.add('open');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeImage() {
+    imageModal.classList.remove('open');
+    document.body.classList.remove('modal-open');
+  }
+
+  shots.forEach((figure, index) => {
+    const img = figure.querySelector('img');
+    img.tabIndex = 0;
+    img.addEventListener('click', () => openImage(index));
+    img.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openImage(index);
+      }
+    });
+  });
+
+  document.getElementById('image-modal-close').addEventListener('click', closeImage);
+  document.getElementById('image-modal-prev').addEventListener('click', () => {
+    imageIndex = (imageIndex - 1 + shots.length) % shots.length;
+    updateImageModal();
+  });
+  document.getElementById('image-modal-next').addEventListener('click', () => {
+    imageIndex = (imageIndex + 1) % shots.length;
+    updateImageModal();
+  });
+  imageModal.addEventListener('click', (event) => {
+    if (event.target === imageModal) closeImage();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (!imageModal.classList.contains('open')) return;
+    if (event.key === 'Escape') closeImage();
+    if (event.key === 'ArrowLeft') {
+      imageIndex = (imageIndex - 1 + shots.length) % shots.length;
+      updateImageModal();
+    }
+    if (event.key === 'ArrowRight') {
+      imageIndex = (imageIndex + 1) % shots.length;
+      updateImageModal();
+    }
+  });
+
+  showShot(0);
+</script>
 
 </body>
 </html>
