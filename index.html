@@ -1,0 +1,106 @@
+<!doctype html>
+<!--
+  Одна страница: две кнопки скачивания + ченжлог.
+  При выходе новой версии поменяйте VERSION, дату и список в <ul>,
+  а также ссылки в кнопках.
+-->
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Скачать Avaris</title>
+<style>
+  :root {
+    --bg: #16181d;
+    --panel: #1e2128;
+    --fg: #e8e8ea;
+    --dim: #9aa0ac;
+    --accent: #3caa4d;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg: #f6f7f9; --panel: #fff; --fg: #1c1e22; --dim: #666c78; --accent: #2d8c3c; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  h1 { font-size: 26px; margin: 0 0 32px; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  /* Левая колонка — кнопки */
+  .buttons { display: grid; gap: 14px; }
+  .btn {
+    display: block;
+    padding: 18px 22px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    transition: filter .15s;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn strong { display: block; font-size: 19px; }
+  .btn span { display: block; font-size: 13px; opacity: .85; margin-top: 2px; }
+
+  /* Правая колонка — ченжлог */
+  .changelog { min-width: 0; }
+  h2 { font-size: 20px; margin: 0; }
+  .date { color: var(--dim); font-size: 14px; margin: 2px 0 18px; }
+  ul { margin: 0; padding-left: 20px; }
+  li { margin-bottom: 8px; }
+
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; gap: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Avaris</h1>
+
+<div class="layout">
+
+  <div class="buttons">
+    <a class="btn" href="downloads/Avaris-win64.zip">
+      <strong>Windows</strong>
+      <span>64-bit · ZIP</span>
+    </a>
+    <a class="btn" href="downloads/Avaris-linux_x86_64.tar.xz">
+      <strong>Linux</strong>
+      <span>x86-64 · tar.xz</span>
+    </a>
+  </div>
+
+  <div class="changelog">
+    <h2>Версия 20.2.1</h2>
+    <p class="date">2026-10-27</p>
+    <ul>
+      <li>Новый бинд <code>tp_dummy_to_cursor</code> и раздел «Practice» в настройках управления</li>
+      <li>Подсказки (тултипы) для обрезанных текстов в браузере серверов, браузере демок и кастомных биндах</li>
+      <li>Автодемки с метками времени сохраняются в <code>demos/auto/marked</code> и не удаляются автоматически</li>
+      <li>Сотая доля секунды выровнена снизу и с точкой, показывается в тултипе для времён больше часа</li>
+      <li>Переработана подсказка курсора в таблице очков, исправлена подсветка поверх имён игроков</li>
+      <li>Исправлено множество проблем с вводом текста и выделением нескольких строк</li>
+      <li>Исправлены различные проблемы HTTP, особенно в веб-клиенте</li>
+      <li>Исправлены падения при неверных кодах стран и при загрузке шрифтов</li>
+      <li>Редактор: тултипы значений в редакторе конвертов, исправлено удаление tune-зон</li>
+      <li>Исправлено несоответствие ввода между сервером и предсказанием (флаг наблюдателя)</li>
+      <li>Сервер: команда <code>uptime</code> в rcon, исправлены лазеры мёртвых игроков</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>
